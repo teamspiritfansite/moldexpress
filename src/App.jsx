@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   ArrowDownRight,
+  ArrowLeft,
   ArrowRight,
   BadgeCheck,
   Check,
@@ -14,6 +15,7 @@ import {
   ShoppingBag,
   Sparkles,
   Store,
+  Trash2,
   X,
 } from 'lucide-react';
 import { categories, products } from './data/products.js';
@@ -41,6 +43,11 @@ const text = {
     allProducts: 'Vezi toate produsele',
     reviews: 'recenzii',
     add: 'Adaugă în coș',
+    details: 'Vezi detaliile',
+    backToCatalog: 'Înapoi la catalog',
+    description: 'Despre produs',
+    category: 'Categorie',
+    seller: 'Producător',
     newLocal: 'Proaspăt local',
     makersTitle: 'Oameni din spatele lucrurilor',
     makersBody: 'Fiecare produs vine cu o poveste, un loc și o pereche de mâini pricepute.',
@@ -55,8 +62,25 @@ const text = {
     cartTitle: 'Coșul tău',
     emptyCart: 'Coșul este gol deocamdată.',
     subtotal: 'Subtotal',
-    demoCheckout: 'Continuă comanda',
-    checkoutNote: 'Comenzile și plățile nu sunt active în această versiune demo.',
+    demoCheckout: 'Continuă la datele comenzii',
+    checkoutNote: 'Flux demonstrativ: comanda nu este trimisă, iar plata nu este procesată.',
+    checkoutTitle: 'Detalii comandă',
+    backToCart: 'Înapoi la coș',
+    checkoutKicker: 'PASUL 2 · LIVRARE ȘI PLATĂ',
+    contactDetails: 'Date de contact',
+    fullName: 'Nume și prenume',
+    phone: 'Telefon',
+    deliveryAddress: 'Adresa de livrare',
+    deliveryMethod: 'Metoda de livrare',
+    courier: 'Curier',
+    pickup: 'Ridicare personală',
+    paymentMethod: 'Metoda de plată',
+    cardDemo: 'Card · simulare',
+    cash: 'Numerar la livrare',
+    placeDemoOrder: 'Plasează comanda demo',
+    orderSuccess: 'Comandă demonstrativă confirmată',
+    orderSuccessNote: 'Nu s-a trimis nicio comandă și nu s-a efectuat nicio plată.',
+    close: 'Închide',
     added: 'Adăugat în coș',
     city: 'Oraș',
   },
@@ -82,6 +106,11 @@ const text = {
     allProducts: 'Все товары',
     reviews: 'отзывов',
     add: 'В корзину',
+    details: 'Подробнее',
+    backToCatalog: 'Назад в каталог',
+    description: 'О товаре',
+    category: 'Категория',
+    seller: 'Продавец',
     newLocal: 'Новинки рядом',
     makersTitle: 'Люди за этими вещами',
     makersBody: 'У каждого товара своя история, место и пара умелых рук.',
@@ -96,8 +125,25 @@ const text = {
     cartTitle: 'Корзина',
     emptyCart: 'Пока корзина пуста.',
     subtotal: 'Итого',
-    demoCheckout: 'Перейти к заказу',
-    checkoutNote: 'Заказы и платежи не активны в демо-версии.',
+    demoCheckout: 'Перейти к оформлению',
+    checkoutNote: 'Демо-режим: заказ не отправляется, оплата не проводится.',
+    checkoutTitle: 'Оформление заказа',
+    backToCart: 'Вернуться в корзину',
+    checkoutKicker: 'ШАГ 2 · ДОСТАВКА И ОПЛАТА',
+    contactDetails: 'Контактные данные',
+    fullName: 'Имя и фамилия',
+    phone: 'Телефон',
+    deliveryAddress: 'Адрес доставки',
+    deliveryMethod: 'Способ доставки',
+    courier: 'Курьер',
+    pickup: 'Самовывоз',
+    paymentMethod: 'Способ оплаты',
+    cardDemo: 'Карта · симуляция',
+    cash: 'Наличными при получении',
+    placeDemoOrder: 'Оформить демо-заказ',
+    orderSuccess: 'Демо-заказ подтверждён',
+    orderSuccessNote: 'Заказ никуда не отправлен, оплата не проводилась.',
+    close: 'Закрыть',
     added: 'Добавлено в корзину',
     city: 'Город',
   },
@@ -111,8 +157,12 @@ function App() {
   const [language, setLanguage] = useState('ro');
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState('cart');
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [demoOrderTotal, setDemoOrderTotal] = useState(0);
   const [favorites, setFavorites] = useState([]);
   const [notice, setNotice] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -129,6 +179,7 @@ function App() {
 
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.product.priceMDL * item.quantity, 0);
+  const selectedProduct = products.find((product) => product.id === selectedProductId);
 
   function showNotice(message) {
     setNotice(message);
@@ -156,6 +207,17 @@ function App() {
         )
         .filter((item) => item.quantity > 0),
     );
+  }
+
+  function removeFromCart(productId) {
+    setCart((current) => current.filter((item) => item.product.id !== productId));
+  }
+
+  function placeDemoOrder(event) {
+    event.preventDefault();
+    setDemoOrderTotal(cartTotal);
+    setCart([]);
+    setCheckoutStep('success');
   }
 
   function toggleFavorite(productId) {
@@ -208,7 +270,7 @@ function App() {
             <button className="icon-action account-action" type="button" onClick={() => showNotice(t.account)} aria-label={t.account}>
               <span className="avatar-mark">M</span>
             </button>
-            <button className="cart-action" type="button" onClick={() => setCartOpen(true)} aria-label={`${t.cart}, ${cartQuantity}`}>
+            <button className="cart-action" type="button" onClick={() => { setCheckoutStep('cart'); setCartOpen(true); }} aria-label={`${t.cart}, ${cartQuantity}`}>
               <ShoppingBag size={19} aria-hidden="true" />
               <span>{t.cart}</span>
               <b>{cartQuantity}</b>
@@ -233,7 +295,22 @@ function App() {
       </header>
 
       <main id="top">
-        <section className="hero page-container" aria-labelledby="hero-title">
+        {selectedProduct && <section className="product-detail page-container" aria-labelledby="detail-title">
+          <button className="detail-back text-link" type="button" onClick={() => setSelectedProductId(null)}><ArrowLeft size={16} />{t.backToCatalog}</button>
+          <div className="detail-layout">
+            <div className="detail-image-wrap"><img src={selectedProduct.image} alt={selectedProduct.name} /></div>
+            <div className="detail-copy">
+              {selectedProduct.badge && <span className="product-badge detail-badge">{selectedProduct.badge}</span>}
+              <span className="section-kicker">{categories.find((category) => category.id === selectedProduct.category)?.[language] ?? selectedProduct.category}</span>
+              <h1 id="detail-title">{selectedProduct.name}</h1>
+              <div className="product-rating detail-rating"><span className="star-mark">★</span><strong>{selectedProduct.rating.toFixed(1)}</strong><span>({selectedProduct.reviewCount} {t.reviews})</span></div>
+              <p className="detail-description">{selectedProduct.description}</p>
+              <div className="detail-facts"><div><span>{t.category}</span><strong>{categories.find((category) => category.id === selectedProduct.category)?.[language] ?? selectedProduct.category}</strong></div><div><span>{t.seller}</span><strong>{selectedProduct.sellerName}</strong><small>{selectedProduct.sellerCity}</small></div></div>
+              <div className="detail-buy"><strong>{formatPrice(selectedProduct.priceMDL)} <small>MDL</small></strong><button className="button button-dark" type="button" onClick={() => addToCart(selectedProduct)}><Plus size={17} />{t.add}</button></div>
+            </div>
+          </div>
+        </section>}
+        <section className="hero page-container" hidden={Boolean(selectedProduct)} aria-labelledby="hero-title">
           <div className="hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> {t.localBadge}</div>
             <h1 id="hero-title">{t.heroTitle.split('\n').map((line, index) => <span key={line}>{line}{index === 0 && <br />}</span>)}</h1>
@@ -254,7 +331,7 @@ function App() {
           <div className="hero-bottom-label"><span>47°00&apos; N</span><span>•</span><span>28°51&apos; E</span></div>
         </section>
 
-        <section className="category-section page-container" aria-labelledby="category-title">
+        <section className="category-section page-container" hidden={Boolean(selectedProduct)} aria-labelledby="category-title">
           <div className="section-heading compact-heading">
             <div><span className="section-kicker">{language === 'ro' ? 'GĂSEȘTE CEVA AL TĂU' : 'НАЙДИ СВОЁ'}</span><h2 id="category-title">{t.categoriesTitle}</h2></div>
             <p>{t.categoriesNote}</p>
@@ -276,7 +353,7 @@ function App() {
           </div>
         </section>
 
-        <section className="products-section" id="products" aria-labelledby="products-title">
+        <section className="products-section" id="products" hidden={Boolean(selectedProduct)} aria-labelledby="products-title">
           <div className="page-container">
             <div className="section-heading products-heading">
               <div><span className="section-kicker"><span className="live-dot" /> {t.newLocal}</span><h2 id="products-title">{search ? `${t.results}: “${search}”` : t.popular}</h2><p>{t.popularNote}</p></div>
@@ -298,7 +375,8 @@ function App() {
                     </div>
                     <div className="product-info">
                       <div className="product-seller"><span className="seller-avatar">{product.sellerName.charAt(0)}</span><span>{product.sellerName}</span><span className="seller-city">· {product.sellerCity}</span></div>
-                      <h3>{product.name}</h3>
+                      <h3><button className="product-title-button" type="button" onClick={() => setSelectedProductId(product.id)}>{product.name}</button></h3>
+                      <button className="detail-link" type="button" onClick={() => setSelectedProductId(product.id)}>{t.details}<ArrowRight size={13} /></button>
                       <div className="product-rating"><span className="star-mark">★</span><strong>{product.rating.toFixed(1)}</strong><span>({product.reviewCount} {t.reviews})</span></div>
                       <div className="product-bottom"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span><button className="add-button" type="button" onClick={() => addToCart(product)} aria-label={`${t.add}: ${product.name}`}><Plus size={18} /><span>{t.add}</span></button></div>
                     </div>
@@ -311,13 +389,13 @@ function App() {
           </div>
         </section>
 
-        <section className="maker-section page-container" id="makers">
+        <section className="maker-section page-container" hidden={Boolean(selectedProduct)} id="makers">
           <div className="maker-photo"><img src="https://images.unsplash.com/photo-1455390582262-044cdee277a8?auto=format&fit=crop&w=1000&q=85" alt="Meșter lucrând la atelier" loading="lazy" /><span className="photo-caption">ATELIERE LOCALE · DIN ȚARĂ</span></div>
           <div className="maker-copy"><span className="section-kicker">MAI MULT DECÂT UN PRODUS</span><h2>{t.makersTitle}</h2><p>{t.makersBody}</p><div className="maker-stat-row"><div><strong>{demoSellerCount}</strong><small>{language === 'ro' ? 'vânzători demo' : 'продавцов в демо'}</small></div><div><strong>{categories.length - 1}</strong><small>{language === 'ro' ? 'categorii' : 'категории'}</small></div><div><strong>1</strong><small>{language === 'ro' ? 'proiect demo' : 'демо-проект'}</small></div></div><a className="text-link" href="#seller-callout">{t.makersLink}<ArrowRight size={16} /></a></div>
           <span className="maker-side-note" aria-hidden="true">LOCAL, CU SENS.</span>
         </section>
 
-        <section className="seller-callout" id="seller-callout">
+        <section className="seller-callout" hidden={Boolean(selectedProduct)} id="seller-callout">
           <div className="page-container seller-callout-inner"><div className="seller-callout-icon"><Store size={22} /></div><div><h2>{t.sellerTitle}</h2><p>{t.sellerBody}</p></div><a className="button button-light" href="mailto:salut@moldexpress.md">{t.sellerCta}<ArrowRight size={17} /></a><span className="seller-sparkle sparkle-one">✳</span><span className="seller-sparkle sparkle-two">✳</span></div>
         </section>
       </main>
@@ -327,12 +405,41 @@ function App() {
       </footer>
 
       {cartOpen && <div className="drawer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setCartOpen(false); }}>
-        <aside className="cart-drawer" aria-label={t.cartTitle}>
-          <div className="drawer-heading"><div><span className="section-kicker">MOLDEXPRESS</span><h2>{t.cartTitle}<span>{cartQuantity}</span></h2></div><button className="close-drawer" type="button" onClick={() => setCartOpen(false)} aria-label="Close cart"><X size={20} /></button></div>
-          {cart.length === 0 ? <div className="drawer-empty"><span className="empty-bag"><ShoppingBag size={28} /></span><p>{t.emptyCart}</p><button className="button button-dark" type="button" onClick={() => setCartOpen(false)}>{t.explore}<ArrowRight size={16} /></button></div> : <>
-            <div className="cart-items">{cart.map(({ product, quantity }) => <div className="cart-item" key={product.id}><img src={product.image} alt="" /><div className="cart-item-copy"><strong>{product.name}</strong><span>{product.sellerName}</span><b>{formatPrice(product.priceMDL)} MDL</b><div className="quantity-control"><button type="button" onClick={() => updateQuantity(product.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => updateQuantity(product.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button></div></div></div>)}</div>
-            <div className="cart-summary"><div className="subtotal-row"><span>{t.subtotal}</span><strong>{formatPrice(cartTotal)} MDL</strong></div><p>{t.checkoutNote}</p><button className="button button-dark checkout-button" type="button" onClick={() => showNotice(t.checkoutNote)}>{t.demoCheckout}<ArrowRight size={17} /></button></div>
+        <aside className="cart-drawer" aria-label={checkoutStep === 'details' ? t.checkoutTitle : t.cartTitle}>
+          <div className="drawer-heading">
+            <div><span className="section-kicker">MOLDEXPRESS · {checkoutStep === 'details' ? t.checkoutKicker : 'DEMO'}</span><h2>{checkoutStep === 'details' ? t.checkoutTitle : checkoutStep === 'success' ? t.orderSuccess : t.cartTitle}{checkoutStep === 'cart' && <span>{cartQuantity}</span>}</h2></div>
+            <div className="drawer-heading-actions">
+              {checkoutStep === 'details' && <button className="close-drawer" type="button" onClick={() => setCheckoutStep('cart')} aria-label={t.backToCart}><ArrowLeft size={18} /></button>}
+              <button className="close-drawer" type="button" onClick={() => setCartOpen(false)} aria-label={t.close}><X size={20} /></button>
+            </div>
+          </div>
+          {checkoutStep === 'cart' && (cart.length === 0 ? <div className="drawer-empty"><span className="empty-bag"><ShoppingBag size={28} /></span><p>{t.emptyCart}</p><button className="button button-dark" type="button" onClick={() => setCartOpen(false)}>{t.explore}<ArrowRight size={16} /></button></div> : <>
+            <div className="cart-items">{cart.map(({ product, quantity }) => <div className="cart-item" key={product.id}><img src={product.image} alt="" /><div className="cart-item-copy"><strong>{product.name}</strong><span>{product.sellerName}</span><b>{formatPrice(product.priceMDL)} MDL</b><div className="quantity-control"><button type="button" onClick={() => updateQuantity(product.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => updateQuantity(product.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button></div></div><button className="remove-cart-item" type="button" onClick={() => removeFromCart(product.id)} aria-label={language === 'ro' ? 'Elimină produsul' : 'Удалить товар'}><Trash2 size={16} /></button></div>)}</div>
+            <div className="cart-summary"><div className="subtotal-row"><span>{t.subtotal}</span><strong>{formatPrice(cartTotal)} MDL</strong></div><p>{t.checkoutNote}</p><button className="button button-dark checkout-button" type="button" onClick={() => setCheckoutStep('details')}>{t.demoCheckout}<ArrowRight size={17} /></button></div>
+          </>)}
+          {checkoutStep === 'details' && <>
+            <div className="checkout-scroll">
+              <div className="checkout-order-lines">{cart.map(({ product, quantity }) => <div key={product.id}><span>{product.name} × {quantity}</span><strong>{formatPrice(product.priceMDL * quantity)} MDL</strong></div>)}</div>
+              <form id="checkout-form" className="checkout-form" onSubmit={placeDemoOrder}>
+                <fieldset><legend>{t.contactDetails}</legend>
+                  <label>{t.fullName}<input name="name" autoComplete="name" required /></label>
+                  <label>{t.phone}<input name="phone" type="tel" autoComplete="tel" required /></label>
+                  <label>{t.city}<input name="city" autoComplete="address-level2" required /></label>
+                  <label>{t.deliveryAddress}<input name="address" autoComplete="street-address" required /></label>
+                </fieldset>
+                <fieldset><legend>{t.deliveryMethod}</legend><div className="checkout-options">
+                  <label className="checkout-choice"><input type="radio" name="delivery" value="courier" defaultChecked /><span>{t.courier}</span></label>
+                  <label className="checkout-choice"><input type="radio" name="delivery" value="pickup" /><span>{t.pickup}</span></label>
+                </div></fieldset>
+                <fieldset><legend>{t.paymentMethod}</legend><div className="checkout-options">
+                  <label className="checkout-choice"><input type="radio" name="payment" value="card" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} /><span>{t.cardDemo}</span></label>
+                  <label className="checkout-choice"><input type="radio" name="payment" value="cash" checked={paymentMethod === 'cash'} onChange={() => setPaymentMethod('cash')} /><span>{t.cash}</span></label>
+                </div></fieldset>
+              </form>
+            </div>
+            <div className="checkout-footer"><div className="subtotal-row"><span>{t.subtotal}</span><strong>{formatPrice(cartTotal)} MDL</strong></div><p>{t.checkoutNote}</p><button className="button button-dark checkout-button" type="submit" form="checkout-form">{t.placeDemoOrder}<ArrowRight size={17} /></button></div>
           </>}
+          {checkoutStep === 'success' && <div className="checkout-success"><span className="success-mark"><Check size={26} /></span><p>{t.orderSuccessNote}</p><div className="subtotal-row"><span>{t.subtotal}</span><strong>{formatPrice(demoOrderTotal)} MDL</strong></div><button className="button button-dark checkout-button" type="button" onClick={() => setCartOpen(false)}>{t.close}<Check size={17} /></button></div>}
         </aside>
       </div>}
 
