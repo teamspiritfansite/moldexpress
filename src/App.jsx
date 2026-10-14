@@ -4,42 +4,48 @@ import {
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
+  Camera,
   Check,
   ChevronDown,
+  Gamepad2,
+  Headphones,
   Heart,
+  Laptop,
   MapPin,
   Menu,
   Minus,
   Plus,
   Search,
   ShoppingBag,
+  Smartphone,
   Sparkles,
   Store,
   Trash2,
   X,
+  Watch,
 } from 'lucide-react';
 import { categories, products } from './data/products.js';
 
 const text = {
   ro: {
-    tagline: 'Cumpără local. Alege cu rost.',
+    tagline: 'Tehnologie pentru fiecare zi · prețuri în MDL',
     location: 'Chișinău, Moldova',
-    search: 'Ce cauți azi?',
-    catalog: 'Catalog',
-    makers: 'Producători',
-    about: 'Povestea noastră',
-    account: 'Contul meu',
-    cart: 'Coșul meu',
-    localBadge: 'PIAȚA LOCALĂ, ONLINE',
-    heroTitle: 'Lucruri bune,\nfăcute aproape.',
-    heroBody: 'Descoperă oameni talentați și produse cu poveste, create chiar aici, în Moldova.',
-    explore: 'Descoperă produsele',
-    meetMakers: 'Cunoaște producătorii',
-    makersCount: 'creatori locali în catalogul demo',
-    categoriesTitle: 'Alege ce-ți place',
-    categoriesNote: 'De la ateliere mici, cu grijă pentru fiecare detaliu.',
-    popular: 'Alese cu drag',
-    popularNote: 'Produse locale care și-au găsit deja locul în casele oamenilor.',
+    search: 'Caută telefoane, laptopuri, căști...',
+    catalog: 'Categorii',
+    makers: 'Vinde cu noi',
+    about: 'Despre MoldExpress',
+    account: 'Cont demo',
+    cart: 'Coș',
+    localBadge: 'MOLDEXPRESS · ELECTRONICE',
+    heroTitle: 'Tehnologie bună.\nAlegere simplă.',
+    heroBody: 'Telefoane, laptopuri și gadgeturi alese pentru ritmul tău. Compară produsele și găsește-ți următorul upgrade.',
+    explore: 'Vezi produsele',
+    meetMakers: 'Cum funcționează',
+    makersCount: 'produse în catalogul demo',
+    categoriesTitle: 'Găsește tehnologia potrivită',
+    categoriesNote: 'Explorează rapid categoriile populare.',
+    popular: 'Populare acum',
+    popularNote: 'O selecție demo de dispozitive pentru muncă, casă și timp liber.',
     allProducts: 'Vezi toate produsele',
     reviews: 'recenzii',
     add: 'Adaugă în coș',
@@ -48,17 +54,24 @@ const text = {
     description: 'Despre produs',
     category: 'Categorie',
     seller: 'Producător',
-    newLocal: 'Proaspăt local',
-    makersTitle: 'Oameni din spatele lucrurilor',
-    makersBody: 'Fiecare produs vine cu o poveste, un loc și o pereche de mâini pricepute.',
-    makersLink: 'Vezi toți producătorii',
-    sellerTitle: 'Ai un atelier sau un mic brand?',
-    sellerBody: 'Locul tău e aici. Arată Moldovei ce faci cu pasiune.',
-    sellerCta: 'Devino partener',
-    footerAbout: 'O piață mai aproape de casă.',
-    footerNote: 'Un proiect demonstrativ pentru producători și cumpărători din Moldova.',
+    newLocal: 'SELECȚIE MOLDEXPRESS',
+    makersTitle: 'Cumperi informat, alegi în ritmul tău',
+    makersBody: 'Compară specificațiile, verifică evaluările demo și găsește dispozitivul potrivit. Catalogul și comenzile sunt demonstrative.',
+    makersLink: 'Vezi catalogul',
+    sellerTitle: 'Ai un magazin de electronice?',
+    sellerBody: 'Adaugă o fișă demo și vezi cum arată produsele tale în marketplace.',
+    sellerCta: 'Adaugă un produs demo',
+    footerAbout: 'MoldExpress · tehnologie, mai aproape.',
+    footerNote: 'Vitrină demonstrativă. Comenzile și plățile reale nu sunt activate.',
     results: 'produse',
     noResults: 'Nu am găsit produse. Încearcă altă căutare.',
+    sortBy: 'Sortează:',
+    sortFeatured: 'Recomandate',
+    sortPriceAsc: 'Preț crescător',
+    sortPriceDesc: 'Preț descrescător',
+    sortRating: 'Cele mai apreciate',
+    addFavorite: 'Adaugă la favorite',
+    removeFavorite: 'Elimină din favorite',
     cartTitle: 'Coșul tău',
     emptyCart: 'Coșul este gol deocamdată.',
     subtotal: 'Subtotal',
@@ -85,24 +98,24 @@ const text = {
     city: 'Oraș',
   },
   ru: {
-    tagline: 'Покупай местное. Выбирай с душой.',
+    tagline: 'Техника на каждый день · цены в MDL',
     location: 'Кишинёв, Молдова',
-    search: 'Что ищем сегодня?',
-    catalog: 'Каталог',
-    makers: 'Продавцы',
-    about: 'О проекте',
-    account: 'Мой профиль',
+    search: 'Найти смартфон, ноутбук, наушники...',
+    catalog: 'Категории',
+    makers: 'Продавцам',
+    about: 'О MoldExpress',
+    account: 'Демо-профиль',
     cart: 'Корзина',
-    localBadge: 'МЕСТНЫЙ МАРКЕТПЛЕЙС',
-    heroTitle: 'Хорошие вещи,\nсозданные рядом.',
-    heroBody: 'Открой талантливых мастеров и товары с историей, созданные здесь, в Молдове.',
-    explore: 'Смотреть товары',
-    meetMakers: 'Познакомиться с продавцами',
-    makersCount: 'местных авторов в демо-каталоге',
-    categoriesTitle: 'Выбирай, что нравится',
-    categoriesNote: 'От небольших мастерских, с заботой о каждой детали.',
-    popular: 'Выбрано с душой',
-    popularNote: 'Местные товары, которые уже нашли место в чьих-то домах.',
+    localBadge: 'MOLDEXPRESS · ЭЛЕКТРОНИКА',
+    heroTitle: 'Технологии для жизни.\nВыбор без лишнего.',
+    heroBody: 'Смартфоны, ноутбуки и гаджеты для работы, дома и отдыха. Сравнивайте характеристики и выбирайте своё.',
+    explore: 'Смотреть каталог',
+    meetMakers: 'Как это работает',
+    makersCount: 'товаров в демо-каталоге',
+    categoriesTitle: 'Найдите свою категорию',
+    categoriesNote: 'Популярная техника — в нескольких шагах.',
+    popular: 'Популярное сейчас',
+    popularNote: 'Демо-подборка устройств для работы, дома и отдыха.',
     allProducts: 'Все товары',
     reviews: 'отзывов',
     add: 'В корзину',
@@ -111,17 +124,24 @@ const text = {
     description: 'О товаре',
     category: 'Категория',
     seller: 'Продавец',
-    newLocal: 'Новинки рядом',
-    makersTitle: 'Люди за этими вещами',
-    makersBody: 'У каждого товара своя история, место и пара умелых рук.',
-    makersLink: 'Все продавцы',
-    sellerTitle: 'У тебя мастерская или небольшой бренд?',
-    sellerBody: 'Тебе сюда. Покажи Молдове то, что создаёшь с любовью.',
-    sellerCta: 'Стать партнёром',
-    footerAbout: 'Местный рынок ближе к дому.',
-    footerNote: 'Демонстрационный проект для продавцов и покупателей Молдовы.',
+    newLocal: 'ВЫБОР MOLDEXPRESS',
+    makersTitle: 'Выбирайте технику с умом',
+    makersBody: 'Сравнивайте характеристики, смотрите демо-оценки и находите подходящее устройство. Каталог и оформление заказа демонстрационные.',
+    makersLink: 'Перейти в каталог',
+    sellerTitle: 'У вас магазин электроники?',
+    sellerBody: 'Добавьте демо-карточку и посмотрите, как товары будут выглядеть на маркетплейсе.',
+    sellerCta: 'Добавить демо-товар',
+    footerAbout: 'MoldExpress · технологии ближе.',
+    footerNote: 'Демонстрационная витрина. Реальные заказы и оплата не подключены.',
     results: 'товаров',
     noResults: 'Ничего не найдено. Попробуй изменить запрос.',
+    sortBy: 'Сортировка:',
+    sortFeatured: 'Рекомендуемые',
+    sortPriceAsc: 'Сначала дешевле',
+    sortPriceDesc: 'Сначала дороже',
+    sortRating: 'По рейтингу',
+    addFavorite: 'В избранное',
+    removeFavorite: 'Убрать из избранного',
     cartTitle: 'Корзина',
     emptyCart: 'Пока корзина пуста.',
     subtotal: 'Итого',
@@ -151,7 +171,17 @@ const text = {
 
 const formatPrice = (amount) =>
   new Intl.NumberFormat('ro-MD', { maximumFractionDigits: 0 }).format(amount);
-const demoSeller = { name: 'Atelier Demo', city: 'Chișinău' };
+const productLabel = (product, field, language) =>
+  language === 'ro' ? product[`${field}Ro`] ?? product[field] : product[field];
+const demoSeller = { name: 'Electro Demo', city: 'Chișinău' };
+const categoryIcons = {
+  phones: Smartphone,
+  computers: Laptop,
+  audio: Headphones,
+  wearables: Watch,
+  'photo-video': Camera,
+  gaming: Gamepad2,
+};
 
 function SellerWorkspace({ language, productList, onAddProduct, onBack }) {
   const [form, setForm] = useState({ name: '', description: '', priceMDL: '', category: '', image: '' });
@@ -162,7 +192,7 @@ function SellerWorkspace({ language, productList, onAddProduct, onBack }) {
   const labels = isRussian ? {
     back: 'Вернуться в каталог',
     eyebrow: 'ДЕМО-ПРОФИЛЬ ПРОДАВЦА',
-    description: 'Небольшая мастерская тестирует публикацию товаров на MoldExpress. Этот профиль демонстрационный, регистрация и настоящая публикация не подключены.',
+    description: 'Демо-магазин электроники на MoldExpress. Регистрация продавцов и реальные заказы не подключены.',
     products: 'Товары продавца',
     formTitle: 'Добавить тестовый товар',
     formNote: 'Товар появится в каталоге и в этом профиле только на время текущего сеанса.',
@@ -182,7 +212,7 @@ function SellerWorkspace({ language, productList, onAddProduct, onBack }) {
   } : {
     back: 'Înapoi la catalog',
     eyebrow: 'PROFIL DEMO DE VÂNZĂTOR',
-    description: 'Un mic atelier testează publicarea produselor pe MoldExpress. Profilul este demonstrativ; înregistrarea și publicarea reală nu sunt activate.',
+    description: 'Magazin demo de electronice pe MoldExpress. Înregistrarea vânzătorilor și comenzile reale nu sunt activate.',
     products: 'Produsele vânzătorului',
     formTitle: 'Adaugă un produs de test',
     formNote: 'Produsul va apărea în catalog și în acest profil doar pe durata sesiunii.',
@@ -265,7 +295,7 @@ function SellerWorkspace({ language, productList, onAddProduct, onBack }) {
         {sellerProducts.length ? <div className="product-grid">{sellerProducts.map((product) => (
           <article className="product-card" key={product.id}>
             <div className="product-image-wrap"><img src={product.image} alt={product.name} loading="lazy" />{product.badge && <span className="product-badge">{product.badge}</span>}</div>
-            <div className="product-info"><h3>{product.name}</h3><p className="seller-product-description">{product.description}</p><div className="product-bottom"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span></div></div>
+            <div className="product-info"><h3>{productLabel(product, 'name', language)}</h3><p className="seller-product-description">{productLabel(product, 'description', language)}</p><div className="product-bottom"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span></div></div>
           </article>
         ))}</div> : <p className="seller-empty">{labels.empty}</p>}
       </div>
@@ -300,6 +330,7 @@ function App() {
   const [activeView, setActiveView] = useState('catalog');
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [sortOrder, setSortOrder] = useState('featured');
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -314,12 +345,16 @@ function App() {
   const demoSellerCount = new Set(productList.map((product) => product.sellerName)).size;
   const visibleProducts = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
-    return productList.filter((product) => {
+    const matchingProducts = productList.filter((product) => {
       const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
-      const searchable = `${product.name} ${product.description} ${product.sellerName} ${product.sellerCity}`.toLocaleLowerCase();
+      const searchable = `${product.name} ${product.nameRu ?? ''} ${product.nameRo ?? ''} ${product.description} ${product.descriptionRu ?? ''} ${product.descriptionRo ?? ''} ${product.sellerName} ${product.sellerCity}`.toLocaleLowerCase();
       return matchesCategory && (!normalizedSearch || searchable.includes(normalizedSearch));
     });
-  }, [activeCategory, productList, search]);
+    if (sortOrder === 'price-asc') return [...matchingProducts].sort((a, b) => a.priceMDL - b.priceMDL);
+    if (sortOrder === 'price-desc') return [...matchingProducts].sort((a, b) => b.priceMDL - a.priceMDL);
+    if (sortOrder === 'rating') return [...matchingProducts].sort((a, b) => b.rating - a.rating);
+    return matchingProducts;
+  }, [activeCategory, productList, search, sortOrder]);
 
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.product.priceMDL * item.quantity, 0);
@@ -382,14 +417,14 @@ function App() {
     <div className="site-shell">
       <div className="announcement-bar">
         <span><Sparkles size={13} aria-hidden="true" /> {t.tagline}</span>
-        <span className="announcement-right">MOLDOVA <span className="flag-mark" aria-hidden="true"><i /><i /><i /></span> CU DRAG</span>
+        <span className="announcement-right">MOLDEXPRESS <span className="flag-mark" aria-hidden="true"><i /><i /><i /></span> DEMO STORE</span>
       </div>
 
       <header className="site-header">
         <div className="header-main page-container">
           <a className="brand" href="#top" onClick={() => setActiveView('catalog')} aria-label="MoldExpress home">
             <span className="brand-mark" aria-hidden="true"><span /><span /><span /></span>
-            <span className="brand-word">Mold<span>Express</span><small>PIAȚA NOASTRĂ</small></span>
+            <span className="brand-word">Mold<span>Express</span><small>ELECTRONICE · MD</small></span>
           </a>
 
           <form className="search-box" onSubmit={(event) => { event.preventDefault(); setActiveView('catalog'); document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' }); }} role="search">
@@ -400,7 +435,7 @@ function App() {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
-            <span className="search-hint">⌘ K</span>
+            <span className="search-hint">MDL</span>
           </form>
 
           <div className="header-actions">
@@ -453,13 +488,13 @@ function App() {
               <section className="product-detail page-container" aria-labelledby="detail-title">
                 <button className="detail-back text-link" type="button" onClick={() => setSelectedProductId(null)}><ArrowLeft size={16} />{t.backToCatalog}</button>
                 <div className="detail-layout">
-                  <div className="detail-image-wrap"><img src={selectedProduct.image} alt={selectedProduct.name} /></div>
+                  <div className="detail-image-wrap"><img src={selectedProduct.image} alt={productLabel(selectedProduct, 'name', language)} /></div>
                   <div className="detail-copy">
-                    {selectedProduct.badge && <span className="product-badge detail-badge">{selectedProduct.badge}</span>}
+                    {selectedProduct.badge && <span className="product-badge detail-badge">{productLabel(selectedProduct, 'badge', language)}</span>}
                     <span className="section-kicker">{categories.find((category) => category.id === selectedProduct.category)?.[language] ?? selectedProduct.category}</span>
-                    <h1 id="detail-title">{selectedProduct.name}</h1>
+                    <h1 id="detail-title">{productLabel(selectedProduct, 'name', language)}</h1>
                     <div className="product-rating detail-rating"><span className="star-mark">★</span><strong>{selectedProduct.rating.toFixed(1)}</strong><span>({selectedProduct.reviewCount} {t.reviews})</span></div>
-                    <p className="detail-description">{selectedProduct.description}</p>
+                    <p className="detail-description">{productLabel(selectedProduct, 'description', language)}</p>
                     <div className="detail-facts"><div><span>{t.category}</span><strong>{categories.find((category) => category.id === selectedProduct.category)?.[language] ?? selectedProduct.category}</strong></div><div><span>{t.seller}</span><strong>{selectedProduct.sellerName}</strong><small>{selectedProduct.sellerCity}</small></div></div>
                     <div className="detail-buy"><strong>{formatPrice(selectedProduct.priceMDL)} <small>MDL</small></strong><button className="button button-dark" type="button" onClick={() => addToCart(selectedProduct)}><Plus size={17} />{t.add}</button></div>
                   </div>
@@ -481,9 +516,9 @@ function App() {
                 <div className="hero-proof"><span className="proof-avatars"><i>A</i><i>M</i><i>V</i></span><span><strong>{demoSellerCount}</strong> · {t.makersCount}</span></div>
               </div>
               <div className="hero-image-wrap">
-                <img className="hero-image" src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1500&q=90" alt="Piață cu produse locale proaspete" />
-                <div className="hero-image-note"><span className="note-icon"><BadgeCheck size={17} /></span><span><strong>{language === 'ro' ? 'Aproape de tine' : 'Рядом с тобой'}</strong><small>{language === 'ro' ? 'Descoperă Moldova, produs cu produs' : 'Открывай Молдову, товар за товаром'}</small></span></div>
-                <span className="hero-image-index">01 — 04</span>
+                <img className="hero-image" src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1500&q=90" alt={language === 'ro' ? 'Laptopuri și dispozitive electronice' : 'Ноутбуки и электронные устройства'} />
+                <div className="hero-image-note"><span className="note-icon"><BadgeCheck size={17} /></span><span><strong>{language === 'ro' ? 'Alegere demo' : 'Демо-подборка'}</strong><small>{language === 'ro' ? 'Descoperă gadgeturi pentru fiecare zi' : 'Гаджеты на каждый день'}</small></span></div>
+                <span className="hero-image-index">MOLDEXPRESS · TECH</span>
               </div>
               <div className="hero-bottom-label"><span>47°00&apos; N</span><span>•</span><span>28°51&apos; E</span></div>
             </section>
@@ -494,19 +529,22 @@ function App() {
                 <p>{t.categoriesNote}</p>
               </div>
               <div className="category-list">
-                {categories.map((category, index) => (
-                  <button
-                    className={`category-item category-tone-${index} ${activeCategory === category.id ? 'is-active' : ''}`}
-                    key={category.id}
-                    type="button"
-                    onClick={() => selectCategory(category.id)}
-                    aria-pressed={activeCategory === category.id}
-                  >
-                    <span className="category-glyph" aria-hidden="true">{category.mark}</span>
-                    <span className="category-label">{category[language]}</span>
-                    <ArrowDownRight className="category-arrow" size={15} aria-hidden="true" />
-                  </button>
-                ))}
+                {categories.map((category, index) => {
+                  const CategoryIcon = categoryIcons[category.id] ?? Sparkles;
+                  return (
+                    <button
+                      className={`category-item category-tone-${index} ${activeCategory === category.id ? 'is-active' : ''}`}
+                      key={category.id}
+                      type="button"
+                      onClick={() => selectCategory(category.id)}
+                      aria-pressed={activeCategory === category.id}
+                    >
+                      <span className="category-glyph" aria-hidden="true"><CategoryIcon size={21} strokeWidth={1.8} /></span>
+                      <span className="category-label">{category[language]}</span>
+                      <ArrowDownRight className="category-arrow" size={15} aria-hidden="true" />
+                    </button>
+                  );
+                })}
               </div>
             </section>
 
@@ -515,6 +553,7 @@ function App() {
                 <div className="section-heading products-heading">
                   <div><span className="section-kicker"><span className="live-dot" /> {t.newLocal}</span><h2 id="products-title">{search ? `${t.results}: “${search}”` : t.popular}</h2><p>{t.popularNote}</p></div>
                   <div className="products-heading-actions">
+                    <label className="sort-control"><span>{t.sortBy}</span><select value={sortOrder} onChange={(event) => setSortOrder(event.target.value)} aria-label={t.sortBy}><option value="featured">{t.sortFeatured}</option><option value="price-asc">{t.sortPriceAsc}</option><option value="price-desc">{t.sortPriceDesc}</option><option value="rating">{t.sortRating}</option></select></label>
                     <span className="result-count">{visibleProducts.length.toString().padStart(2, '0')} {t.results}</span>
                     <button className="text-link all-products-link" type="button" onClick={() => { setSearch(''); setActiveCategory('all'); }}>{t.allProducts}<ArrowRight size={16} /></button>
                   </div>
@@ -524,18 +563,19 @@ function App() {
                     {visibleProducts.map((product, index) => (
                       <article className="product-card" key={product.id} style={{ '--item-index': index }}>
                         <div className="product-image-wrap">
-                          <img src={product.image} alt={product.name} loading="lazy" />
-                          {product.badge && <span className="product-badge">{product.badge}</span>}
-                          <button className={`favorite-button ${favorites.includes(product.id) ? 'is-favorite' : ''}`} type="button" onClick={() => toggleFavorite(product.id)} aria-label={favorites.includes(product.id) ? 'Remove from favorites' : 'Add to favorites'}>
+                          <img src={product.image} alt={productLabel(product, 'name', language)} loading="lazy" />
+                          {product.badge && <span className="product-badge">{productLabel(product, 'badge', language)}</span>}
+                          <button className={`favorite-button ${favorites.includes(product.id) ? 'is-favorite' : ''}`} type="button" onClick={() => toggleFavorite(product.id)} aria-label={favorites.includes(product.id) ? t.removeFavorite : t.addFavorite}>
                             <Heart size={17} fill={favorites.includes(product.id) ? 'currentColor' : 'none'} />
                           </button>
                         </div>
                         <div className="product-info">
                           <div className="product-seller"><span className="seller-avatar">{product.sellerName.charAt(0)}</span><span>{product.sellerName}</span><span className="seller-city">· {product.sellerCity}</span></div>
-                          <h3><button className="product-title-button" type="button" onClick={() => setSelectedProductId(product.id)}>{product.name}</button></h3>
+                          <h3><button className="product-title-button" type="button" onClick={() => setSelectedProductId(product.id)}>{productLabel(product, 'name', language)}</button></h3>
+                          <p className="product-spec">{product.shortSpec}</p>
                           <button className="detail-link" type="button" onClick={() => setSelectedProductId(product.id)}>{t.details}<ArrowRight size={13} /></button>
                           <div className="product-rating"><span className="star-mark">★</span><strong>{product.rating.toFixed(1)}</strong><span>({product.reviewCount} {t.reviews})</span></div>
-                          <div className="product-bottom"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span><button className="add-button" type="button" onClick={() => addToCart(product)} aria-label={`${t.add}: ${product.name}`}><Plus size={18} /><span>{t.add}</span></button></div>
+                          <div className="product-bottom"><span className="price-stack"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span>{product.oldPriceMDL && <del>{formatPrice(product.oldPriceMDL)} MDL</del>}</span><button className="add-button" type="button" onClick={() => addToCart(product)} aria-label={`${t.add}: ${productLabel(product, 'name', language)}`}><Plus size={18} /><span>{t.add}</span></button></div>
                         </div>
                       </article>
                     ))}
@@ -547,9 +587,9 @@ function App() {
             </section>
 
             <section className="maker-section page-container" hidden={Boolean(selectedProduct)} id="makers">
-              <div className="maker-photo"><img src="https://images.unsplash.com/photo-1455390582262-044cdee277a8?auto=format&fit=crop&w=1000&q=85" alt="Meșter lucrând la atelier" loading="lazy" /><span className="photo-caption">ATELIERE LOCALE · DIN ȚARĂ</span></div>
-              <div className="maker-copy"><span className="section-kicker">MAI MULT DECÂT UN PRODUS</span><h2>{t.makersTitle}</h2><p>{t.makersBody}</p><div className="maker-stat-row"><div><strong>{demoSellerCount}</strong><small>{language === 'ro' ? 'vânzători demo' : 'продавцов в демо'}</small></div><div><strong>{categories.length - 1}</strong><small>{language === 'ro' ? 'categorii' : 'категории'}</small></div><div><strong>1</strong><small>{language === 'ro' ? 'proiect demo' : 'демо-проект'}</small></div></div><a className="text-link" href="#seller-callout">{t.makersLink}<ArrowRight size={16} /></a></div>
-              <span className="maker-side-note" aria-hidden="true">LOCAL, CU SENS.</span>
+              <div className="maker-photo"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1000&q=85" alt={language === 'ro' ? 'Dispozitive și tehnologie pentru lucru' : 'Техника и устройства для работы'} loading="lazy" /><span className="photo-caption">MOLDEXPRESS · DEMO CATALOG</span></div>
+              <div className="maker-copy"><span className="section-kicker">{language === 'ro' ? 'ALEGE CU ÎNCREDERE' : 'ВЫБИРАЙТЕ УВЕРЕННО'}</span><h2>{t.makersTitle}</h2><p>{t.makersBody}</p><div className="maker-stat-row"><div><strong>{productList.length}</strong><small>{language === 'ro' ? 'produse demo' : 'демо-товаров'}</small></div><div><strong>{categories.length - 1}</strong><small>{language === 'ro' ? 'categorii' : 'категорий'}</small></div><div><strong>RO + RU</strong><small>{language === 'ro' ? 'limbi' : 'языка'}</small></div></div><a className="text-link" href="#products" onClick={() => { setActiveCategory('all'); setSearch(''); }}>{t.makersLink}<ArrowRight size={16} /></a></div>
+              <span className="maker-side-note" aria-hidden="true">TECH · EVERY DAY</span>
             </section>
 
             <section className="seller-callout" id="seller-callout">
@@ -560,7 +600,7 @@ function App() {
       </main>
 
       <footer className="site-footer" id="our-story">
-        <div className="page-container footer-main"><a className="brand footer-brand" href="#top"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span><span className="brand-word">Mold<span>Express</span><small>PIAȚA NOASTRĂ</small></span></a><div className="footer-about"><strong>{t.footerAbout}</strong><span>{t.footerNote}</span></div><div className="footer-meta"><span>CHIȘINĂU · MOLDOVA</span><span>© 2026 MoldExpress</span></div></div>
+        <div className="page-container footer-main"><a className="brand footer-brand" href="#top"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span><span className="brand-word">Mold<span>Express</span><small>ELECTRONICE · MD</small></span></a><div className="footer-about"><strong>{t.footerAbout}</strong><span>{t.footerNote}</span></div><div className="footer-meta"><span>CHIȘINĂU · MOLDOVA</span><span>© 2026 MoldExpress</span></div></div>
       </footer>
 
       {cartOpen && <div className="drawer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setCartOpen(false); }}>
@@ -573,12 +613,12 @@ function App() {
             </div>
           </div>
           {checkoutStep === 'cart' && (cart.length === 0 ? <div className="drawer-empty"><span className="empty-bag"><ShoppingBag size={28} /></span><p>{t.emptyCart}</p><button className="button button-dark" type="button" onClick={() => setCartOpen(false)}>{t.explore}<ArrowRight size={16} /></button></div> : <>
-            <div className="cart-items">{cart.map(({ product, quantity }) => <div className="cart-item" key={product.id}><img src={product.image} alt="" /><div className="cart-item-copy"><strong>{product.name}</strong><span>{product.sellerName}</span><b>{formatPrice(product.priceMDL)} MDL</b><div className="quantity-control"><button type="button" onClick={() => updateQuantity(product.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => updateQuantity(product.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button></div></div><button className="remove-cart-item" type="button" onClick={() => removeFromCart(product.id)} aria-label={language === 'ro' ? 'Elimină produsul' : 'Удалить товар'}><Trash2 size={16} /></button></div>)}</div>
+            <div className="cart-items">{cart.map(({ product, quantity }) => <div className="cart-item" key={product.id}><img src={product.image} alt="" /><div className="cart-item-copy"><strong>{productLabel(product, 'name', language)}</strong><span>{product.sellerName}</span><b>{formatPrice(product.priceMDL)} MDL</b><div className="quantity-control"><button type="button" onClick={() => updateQuantity(product.id, -1)} aria-label="Decrease quantity"><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => updateQuantity(product.id, 1)} aria-label="Increase quantity"><Plus size={13} /></button></div></div><button className="remove-cart-item" type="button" onClick={() => removeFromCart(product.id)} aria-label={language === 'ro' ? 'Elimină produsul' : 'Удалить товар'}><Trash2 size={16} /></button></div>)}</div>
             <div className="cart-summary"><div className="subtotal-row"><span>{t.subtotal}</span><strong>{formatPrice(cartTotal)} MDL</strong></div><p>{t.checkoutNote}</p><button className="button button-dark checkout-button" type="button" onClick={() => setCheckoutStep('details')}>{t.demoCheckout}<ArrowRight size={17} /></button></div>
           </>)}
           {checkoutStep === 'details' && <>
             <div className="checkout-scroll">
-              <div className="checkout-order-lines">{cart.map(({ product, quantity }) => <div key={product.id}><span>{product.name} × {quantity}</span><strong>{formatPrice(product.priceMDL * quantity)} MDL</strong></div>)}</div>
+              <div className="checkout-order-lines">{cart.map(({ product, quantity }) => <div key={product.id}><span>{productLabel(product, 'name', language)} × {quantity}</span><strong>{formatPrice(product.priceMDL * quantity)} MDL</strong></div>)}</div>
               <form id="checkout-form" className="checkout-form" onSubmit={placeDemoOrder}>
                 <fieldset><legend>{t.contactDetails}</legend>
                   <label>{t.fullName}<input name="name" autoComplete="name" required /></label>
