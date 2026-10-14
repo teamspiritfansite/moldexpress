@@ -105,10 +105,153 @@ const text = {
 
 const formatPrice = (amount) =>
   new Intl.NumberFormat('ro-MD', { maximumFractionDigits: 0 }).format(amount);
-const demoSellerCount = new Set(products.map((product) => product.sellerName)).size;
+const demoSeller = { name: 'Atelier Demo', city: 'Chișinău' };
+
+function SellerWorkspace({ language, productList, onAddProduct, onBack }) {
+  const [form, setForm] = useState({ name: '', description: '', priceMDL: '', category: '', image: '' });
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState('');
+  const isRussian = language === 'ru';
+  const sellerProducts = productList.filter((product) => product.sellerName === demoSeller.name);
+  const labels = isRussian ? {
+    back: 'Вернуться в каталог',
+    eyebrow: 'ДЕМО-ПРОФИЛЬ ПРОДАВЦА',
+    description: 'Небольшая мастерская тестирует публикацию товаров на MoldExpress. Этот профиль демонстрационный, регистрация и настоящая публикация не подключены.',
+    products: 'Товары продавца',
+    formTitle: 'Добавить тестовый товар',
+    formNote: 'Товар появится в каталоге и в этом профиле только на время текущего сеанса.',
+    name: 'Название',
+    descriptionField: 'Описание',
+    price: 'Цена, MDL',
+    category: 'Категория',
+    categoryPlaceholder: 'Выберите категорию',
+    image: 'URL изображения',
+    submit: 'Добавить товар',
+    empty: 'У этого продавца пока нет товаров.',
+    added: 'Тестовый товар добавлен в каталог и профиль продавца.',
+    required: 'Заполните это поле.',
+    invalidPrice: 'Введите корректную неотрицательную цену.',
+    invalidUrl: 'Введите корректный URL изображения (http или https).',
+    chooseCategory: 'Выберите категорию.',
+  } : {
+    back: 'Înapoi la catalog',
+    eyebrow: 'PROFIL DEMO DE VÂNZĂTOR',
+    description: 'Un mic atelier testează publicarea produselor pe MoldExpress. Profilul este demonstrativ; înregistrarea și publicarea reală nu sunt activate.',
+    products: 'Produsele vânzătorului',
+    formTitle: 'Adaugă un produs de test',
+    formNote: 'Produsul va apărea în catalog și în acest profil doar pe durata sesiunii.',
+    name: 'Denumire',
+    descriptionField: 'Descriere',
+    price: 'Preț, MDL',
+    category: 'Categorie',
+    categoryPlaceholder: 'Alege categoria',
+    image: 'URL imagine',
+    submit: 'Adaugă produsul',
+    empty: 'Acest vânzător nu are produse momentan.',
+    added: 'Produsul de test a fost adăugat în catalog și profil.',
+    required: 'Completează acest câmp.',
+    invalidPrice: 'Introdu un preț valid, egal sau mai mare decât zero.',
+    invalidUrl: 'Introdu un URL de imagine valid (http sau https).',
+    chooseCategory: 'Alege o categorie.',
+  };
+
+  function updateField(event) {
+    const { name, value } = event.target;
+    setForm((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: '' }));
+    setSuccess('');
+  }
+
+  function submitProduct(event) {
+    event.preventDefault();
+    const nextErrors = {};
+    if (!form.name.trim()) nextErrors.name = labels.required;
+    if (!form.description.trim()) nextErrors.description = labels.required;
+    if (form.priceMDL.trim() === '') {
+      nextErrors.priceMDL = labels.required;
+    } else if (!Number.isFinite(Number(form.priceMDL)) || Number(form.priceMDL) < 0) {
+      nextErrors.priceMDL = labels.invalidPrice;
+    }
+    if (!form.category) nextErrors.category = labels.chooseCategory;
+    if (!form.image.trim()) {
+      nextErrors.image = labels.required;
+    } else {
+      try {
+        const imageUrl = new URL(form.image);
+        if (!['http:', 'https:'].includes(imageUrl.protocol)) nextErrors.image = labels.invalidUrl;
+      } catch {
+        nextErrors.image = labels.invalidUrl;
+      }
+    }
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    onAddProduct({
+      id: `demo-${Date.now()}`,
+      name: form.name.trim(),
+      description: form.description.trim(),
+      priceMDL: Number(form.priceMDL),
+      category: form.category,
+      image: form.image.trim(),
+      sellerName: demoSeller.name,
+      sellerCity: demoSeller.city,
+      rating: 0,
+      reviewCount: 0,
+      badge: isRussian ? 'Тестовый товар' : 'Produs de test',
+    });
+    setForm({ name: '', description: '', priceMDL: '', category: '', image: '' });
+    setSuccess(labels.added);
+  }
+
+  function fieldError(name) {
+    return errors[name] ? <span className="field-error" id={`${name}-error`}>{errors[name]}</span> : null;
+  }
+
+  return (
+    <section className="seller-workspace page-container" aria-labelledby="seller-page-title">
+      <button className="text-link seller-back" type="button" onClick={onBack}><ArrowRight size={16} className="back-arrow" />{labels.back}</button>
+      <div className="seller-profile">
+        <span className="seller-profile-mark"><Store size={25} aria-hidden="true" /></span>
+        <div><span className="section-kicker">{labels.eyebrow}</span><h1 id="seller-page-title">{demoSeller.name}</h1><p>{labels.description}</p><span className="seller-profile-city"><MapPin size={14} aria-hidden="true" />{demoSeller.city}</span></div>
+      </div>
+      <div className="seller-products">
+        <h2>{labels.products}<span>{sellerProducts.length}</span></h2>
+        {sellerProducts.length ? <div className="product-grid">{sellerProducts.map((product) => (
+          <article className="product-card" key={product.id}>
+            <div className="product-image-wrap"><img src={product.image} alt={product.name} loading="lazy" />{product.badge && <span className="product-badge">{product.badge}</span>}</div>
+            <div className="product-info"><h3>{product.name}</h3><p className="seller-product-description">{product.description}</p><div className="product-bottom"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span></div></div>
+          </article>
+        ))}</div> : <p className="seller-empty">{labels.empty}</p>}
+      </div>
+      <form className="product-form" onSubmit={submitProduct} noValidate>
+        <div className="product-form-heading"><div><span className="section-kicker">MOLDEXPRESS</span><h2>{labels.formTitle}</h2><p>{labels.formNote}</p></div></div>
+        <div className="product-form-grid">
+          <label className="form-field">
+            <span>{labels.name}</span><input name="name" value={form.name} onChange={updateField} aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? 'name-error' : undefined} />{fieldError('name')}
+          </label>
+          <label className="form-field">
+            <span>{labels.price}</span><input name="priceMDL" type="number" min="0" step="any" value={form.priceMDL} onChange={updateField} aria-invalid={Boolean(errors.priceMDL)} aria-describedby={errors.priceMDL ? 'priceMDL-error' : undefined} />{fieldError('priceMDL')}
+          </label>
+          <label className="form-field form-field-wide">
+            <span>{labels.descriptionField}</span><textarea name="description" rows="4" value={form.description} onChange={updateField} aria-invalid={Boolean(errors.description)} aria-describedby={errors.description ? 'description-error' : undefined} />{fieldError('description')}
+          </label>
+          <label className="form-field">
+            <span>{labels.category}</span><select name="category" value={form.category} onChange={updateField} aria-invalid={Boolean(errors.category)} aria-describedby={errors.category ? 'category-error' : undefined}><option value="">{labels.categoryPlaceholder}</option>{categories.filter((category) => category.id !== 'all').map((category) => <option key={category.id} value={category.id}>{category[language]}</option>)}</select>{fieldError('category')}
+          </label>
+          <label className="form-field">
+            <span>{labels.image}</span><input name="image" type="url" value={form.image} onChange={updateField} aria-invalid={Boolean(errors.image)} aria-describedby={errors.image ? 'image-error' : undefined} />{fieldError('image')}
+          </label>
+        </div>
+        <div className="product-form-actions"><button className="button button-dark" type="submit">{labels.submit}<ArrowRight size={17} aria-hidden="true" /></button>{success && <span className="form-success" role="status"><Check size={16} aria-hidden="true" />{success}</span>}</div>
+      </form>
+    </section>
+  );
+}
 
 function App() {
   const [language, setLanguage] = useState('ro');
+  const [productList, setProductList] = useState(products);
+  const [activeView, setActiveView] = useState('catalog');
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [cart, setCart] = useState([]);
@@ -118,14 +261,15 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const t = text[language];
 
+  const demoSellerCount = new Set(productList.map((product) => product.sellerName)).size;
   const visibleProducts = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
-    return products.filter((product) => {
+    return productList.filter((product) => {
       const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
       const searchable = `${product.name} ${product.description} ${product.sellerName} ${product.sellerCity}`.toLocaleLowerCase();
       return matchesCategory && (!normalizedSearch || searchable.includes(normalizedSearch));
     });
-  }, [activeCategory, search]);
+  }, [activeCategory, productList, search]);
 
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.product.priceMDL * item.quantity, 0);
@@ -167,6 +311,7 @@ function App() {
   }
 
   function selectCategory(categoryId) {
+    setActiveView('catalog');
     setActiveCategory(categoryId);
     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -180,12 +325,12 @@ function App() {
 
       <header className="site-header">
         <div className="header-main page-container">
-          <a className="brand" href="#top" aria-label="MoldExpress home">
+          <a className="brand" href="#top" onClick={() => setActiveView('catalog')} aria-label="MoldExpress home">
             <span className="brand-mark" aria-hidden="true"><span /><span /><span /></span>
             <span className="brand-word">Mold<span>Express</span><small>PIAȚA NOASTRĂ</small></span>
           </a>
 
-          <form className="search-box" onSubmit={(event) => { event.preventDefault(); document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' }); }} role="search">
+          <form className="search-box" onSubmit={(event) => { event.preventDefault(); setActiveView('catalog'); document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' }); }} role="search">
             <Search size={18} aria-hidden="true" />
             <input
               aria-label={t.search}
@@ -224,7 +369,7 @@ function App() {
             <button className="nav-catalog" type="button" onClick={() => selectCategory('all')}>
               <Menu size={17} aria-hidden="true" /> {t.catalog} <ChevronDown size={14} aria-hidden="true" />
             </button>
-            <a href="#makers">{t.makers}</a>
+            <button className="nav-page-button" type="button" onClick={() => setActiveView('seller')}>{t.makers}</button>
             <a href="#our-story">{t.about}</a>
             <span className="nav-spacer" />
             <span className="nav-local"><span className="live-dot" /> {language === 'ro' ? 'Făcut cu drag, în Moldova' : 'Сделано с душой в Молдове'}</span>
@@ -233,6 +378,12 @@ function App() {
       </header>
 
       <main id="top">
+        {activeView === 'seller' ? <SellerWorkspace
+          language={language}
+          productList={productList}
+          onAddProduct={(product) => setProductList((current) => [...current, product])}
+          onBack={() => setActiveView('catalog')}
+        /> : <>
         <section className="hero page-container" aria-labelledby="hero-title">
           <div className="hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> {t.localBadge}</div>
@@ -318,8 +469,9 @@ function App() {
         </section>
 
         <section className="seller-callout" id="seller-callout">
-          <div className="page-container seller-callout-inner"><div className="seller-callout-icon"><Store size={22} /></div><div><h2>{t.sellerTitle}</h2><p>{t.sellerBody}</p></div><a className="button button-light" href="mailto:salut@moldexpress.md">{t.sellerCta}<ArrowRight size={17} /></a><span className="seller-sparkle sparkle-one">✳</span><span className="seller-sparkle sparkle-two">✳</span></div>
+          <div className="page-container seller-callout-inner"><div className="seller-callout-icon"><Store size={22} /></div><div><h2>{t.sellerTitle}</h2><p>{t.sellerBody}</p></div><button className="button button-light" type="button" onClick={() => { setActiveView('seller'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{t.sellerCta}<ArrowRight size={17} /></button><span className="seller-sparkle sparkle-one">✳</span><span className="seller-sparkle sparkle-two">✳</span></div>
         </section>
+        </>}
       </main>
 
       <footer className="site-footer" id="our-story">
