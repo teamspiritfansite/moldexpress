@@ -101,6 +101,7 @@ const text = {
     sellerCta: 'Vinde pe MoldExpress',
     footerAbout: 'MoldExpress · produse create aproape de tine.',
     footerNote: 'Vitrină demonstrativă. Produsele și comenzile nu sunt salvate pe un server.',
+    projectTeam: 'ECHIPA PROIECTULUI',
     results: 'produse',
     noResults: 'Nu am găsit produse. Încearcă o altă căutare.',
     sortBy: 'Sortează:',
@@ -205,6 +206,7 @@ const text = {
     sellerCta: 'Продавать на MoldExpress',
     footerAbout: 'MoldExpress · местные товары ближе.',
     footerNote: 'Демонстрационная витрина. Товары и заказы не сохраняются на сервере.',
+    projectTeam: 'КОМАНДА ПРОЕКТА',
     results: 'товаров',
     noResults: 'Ничего не найдено. Попробуйте изменить запрос.',
     sortBy: 'Сортировка:',
@@ -967,7 +969,7 @@ function App() {
       </main>
 
       <footer className="site-footer" id="our-story">
-        <div className="page-container footer-main"><a className="brand footer-brand" href="#top"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span><span className="brand-word">Mold<span>Express</span><small>{language === 'ru' ? 'МЕСТНЫЕ БРЕНДЫ · MD' : 'BRANDURI LOCALE · MD'}</small></span></a><div className="footer-about"><strong>{t.footerAbout}</strong><span>{t.footerNote}</span></div><div className="footer-meta"><span>CHIȘINĂU · MOLDOVA</span><span>© 2026 MoldExpress</span></div></div>
+        <div className="page-container footer-main"><a className="brand footer-brand" href="#top"><span className="brand-mark" aria-hidden="true"><span /><span /><span /></span><span className="brand-word">Mold<span>Express</span><small>{language === 'ru' ? 'МЕСТНЫЕ БРЕНДЫ · MD' : 'BRANDURI LOCALE · MD'}</small></span></a><div className="footer-about"><strong>{t.footerAbout}</strong><span>{t.footerNote}</span></div><div className="footer-team"><strong>{t.projectTeam}</strong><span>Малышев Владимир · Бурцев Максим · Морозов Александр · Ничик Данила</span></div><div className="footer-meta"><span>CHIȘINĂU · MOLDOVA</span><span>© 2026 MoldExpress</span></div></div>
       </footer>
 
       {cartOpen && <div className="drawer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setCartOpen(false); }}>
