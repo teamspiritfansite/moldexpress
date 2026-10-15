@@ -248,6 +248,30 @@ const formatPrice = (amount) =>
   new Intl.NumberFormat('ro-MD', { maximumFractionDigits: 0 }).format(amount);
 const productLabel = (product, field, language) =>
   language === 'ro' ? product[`${field}Ro`] ?? product[field] : product[field];
+
+function responsiveImageProps(src, sizes, widths = [320, 480, 640], loading = 'lazy') {
+  if (!src.startsWith('https://images.unsplash.com/')) {
+    return { src, sizes, loading, decoding: 'async' };
+  }
+
+  const originalUrl = new URL(src);
+  const urlForWidth = (width) => {
+    const url = new URL(originalUrl);
+    url.searchParams.set('w', String(width));
+    url.searchParams.set('q', '80');
+    url.searchParams.set('auto', 'format');
+    return url.toString();
+  };
+
+  return {
+    src: urlForWidth(widths[widths.length - 1]),
+    srcSet: widths.map((width) => `${urlForWidth(width)} ${width}w`).join(', '),
+    sizes,
+    loading,
+    decoding: 'async',
+  };
+}
+
 const demoSeller = { name: 'Producător local', city: 'Chișinău' };
 const categoryIcons = {
   food: Utensils,
@@ -408,7 +432,7 @@ function SellerWorkspace({ language, productList, onAddProduct, onBack }) {
         <h2>{labels.products}<span>{sellerProducts.length}</span></h2>
         {sellerProducts.length ? <div className="product-grid">{sellerProducts.map((product) => (
           <article className="product-card" key={product.id}>
-            <div className="product-image-wrap"><img src={product.image} alt={product.name} width="300" height="264" loading="lazy" />{product.badge && <span className="product-badge">{product.badge}</span>}</div>
+            <div className="product-image-wrap"><img {...responsiveImageProps(product.image, '(max-width: 720px) 50vw, (max-width: 1050px) 33vw, 25vw')} alt={product.name} width="300" height="264" />{product.badge && <span className="product-badge">{product.badge}</span>}</div>
             <div className="product-info"><h3>{productLabel(product, 'name', language)}</h3><p className="seller-product-description">{productLabel(product, 'description', language)}</p><div className="product-bottom"><span className="product-price">{formatPrice(product.priceMDL)} <small>MDL</small></span></div></div>
           </article>
         ))}</div> : <p className="seller-empty">{labels.empty}</p>}
@@ -468,7 +492,7 @@ function ComparisonPage({ language, items, onRemove, onBack, labels }) {
             <div className="comparison-table">
               <div className="comparison-row comparison-products-row" style={{ '--comparison-count': items.length }}><div className="comparison-label" />{items.map((product) => (
                 <div className="comparison-cell comparison-product" key={product.id}>
-                  <img src={product.image} alt={productLabel(product, 'name', language)} width="112" height="96" loading="lazy" />
+                  <img {...responsiveImageProps(product.image, '240px', [240, 360, 480])} alt={productLabel(product, 'name', language)} width="112" height="96" />
                   <strong>{productLabel(product, 'name', language)}</strong>
                   <button type="button" className="text-link" onClick={() => onRemove(product.id)}>{labels.removeCompare}<X size={14} /></button>
                 </div>
@@ -839,7 +863,7 @@ function App() {
               <section className="product-detail page-container" aria-labelledby="detail-title">
                 <button className="detail-back text-link" type="button" onClick={() => { setSelectedProductId(null); setActiveView('catalog'); }}><ArrowLeft size={16} />{t.backToCatalog}</button>
                 <div className="detail-layout">
-                  <div className="detail-image-wrap"><img src={selectedProduct.image} alt={productLabel(selectedProduct, 'name', language)} width="700" height="640" /></div>
+                  <div className="detail-image-wrap"><img {...responsiveImageProps(selectedProduct.image, '(max-width: 720px) 100vw, 50vw', [480, 720, 960])} alt={productLabel(selectedProduct, 'name', language)} width="700" height="640" /></div>
                   <div className="detail-copy">
                     {selectedProduct.badge && <span className="product-badge detail-badge">{productLabel(selectedProduct, 'badge', language)}</span>}
                     <span className="section-kicker">{categories.find((category) => category.id === selectedProduct.category)?.[language] ?? selectedProduct.category}</span>
@@ -868,7 +892,7 @@ function App() {
                 <div className="hero-proof"><span><strong>{demoProductCount}</strong> · {t.makersCount}</span></div>
               </div>
               <div className="hero-image-wrap">
-                <img className="hero-image" src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1500&q=90" alt={language === 'ro' ? 'Produse proaspete la piața locală' : 'Свежие продукты на местном рынке'} width="1500" height="1000" />
+                <img className="hero-image" {...responsiveImageProps('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1500&q=90', '(max-width: 720px) 100vw, 55vw', [480, 768, 1200], 'eager')} fetchPriority="high" alt={language === 'ro' ? 'Produse proaspete la piața locală' : 'Свежие продукты на местном рынке'} width="1500" height="1000" />
                 <div className="hero-image-note"><span className="note-icon"><BadgeCheck size={17} /></span><span><strong>{language === 'ro' ? 'Creat în Moldova' : 'Создано в Молдове'}</strong><small>{language === 'ro' ? 'Descoperă branduri și ateliere locale' : 'Откройте местные бренды и мастерские'}</small></span></div>
                 <span className="hero-image-index">MOLDEXPRESS · PRODUSE LOCALE</span>
               </div>
@@ -931,7 +955,7 @@ function App() {
                     {displayedProducts.map((product, index) => (
                       <article className="product-card" key={product.id} style={{ '--item-index': index }}>
                         <div className="product-image-wrap">
-                          <img src={product.image} alt={productLabel(product, 'name', language)} width="300" height="264" loading="lazy" />
+                          <img {...responsiveImageProps(product.image, '(max-width: 720px) 50vw, (max-width: 1050px) 33vw, 25vw')} alt={productLabel(product, 'name', language)} width="300" height="264" />
                           {product.badge && <span className="product-badge">{productLabel(product, 'badge', language)}</span>}
                           <button className={`favorite-button ${favorites.includes(product.id) ? 'is-favorite' : ''}`} type="button" onClick={() => toggleFavorite(product.id)} aria-label={favorites.includes(product.id) ? t.removeFavorite : t.addFavorite}>
                             <Heart size={17} fill={favorites.includes(product.id) ? 'currentColor' : 'none'} />
@@ -957,7 +981,7 @@ function App() {
             </section>
 
             <section className="maker-section page-container" hidden={Boolean(selectedProduct) || activeView !== 'catalog'} id="makers">
-              <div className="maker-photo"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=85" alt={language === 'ro' ? 'Produse proaspete de la producători locali' : 'Свежие продукты местных производителей'} width="1000" height="667" loading="lazy" /><span className="photo-caption">MOLDEXPRESS · {t.photoCaption}</span></div>
+              <div className="maker-photo"><img {...responsiveImageProps('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=85', '(max-width: 720px) 100vw, 45vw', [480, 768, 1100])} alt={language === 'ro' ? 'Produse proaspete de la producători locali' : 'Свежие продукты местных производителей'} width="1000" height="667" /><span className="photo-caption">MOLDEXPRESS · {t.photoCaption}</span></div>
               <div className="maker-copy"><span className="section-kicker">{language === 'ro' ? 'ALEGE CU ÎNCREDERE' : 'ВЫБИРАЙТЕ УВЕРЕННО'}</span><h2>{t.makersTitle}</h2><p>{t.makersBody}</p><div className="maker-stat-row"><div><strong>{productList.length}</strong><small>{language === 'ro' ? 'produse demo' : 'демо-товаров'}</small></div><div><strong>{categories.length - 1}</strong><small>{language === 'ro' ? 'categorii' : 'категорий'}</small></div><div><strong>RO + RU</strong><small>{language === 'ro' ? 'limbi' : 'языка'}</small></div></div><a className="text-link" href="#products" onClick={() => { setActiveCategory('all'); setSearch(''); }}>{t.makersLink}<ArrowRight size={16} /></a></div>
             </section>
 
@@ -982,7 +1006,7 @@ function App() {
             </div>
           </div>
           {checkoutStep === 'cart' && (cart.length === 0 ? <div className="drawer-empty"><span className="empty-bag"><ShoppingBag size={28} /></span><p>{t.emptyCart}</p><button className="button button-dark" type="button" onClick={() => setCartOpen(false)}>{t.explore}<ArrowRight size={16} /></button></div> : <>
-            <div className="cart-items">{cart.map(({ product, quantity }) => <div className="cart-item" key={product.id}><img src={product.image} alt="" width="76" height="82" /><div className="cart-item-copy"><strong>{productLabel(product, 'name', language)}</strong><span>{product.sellerName}</span><b>{formatPrice(product.priceMDL)} MDL</b><div className="quantity-control"><button type="button" onClick={() => updateQuantity(product.id, -1)} aria-label={language === 'ro' ? 'Scade cantitatea' : 'Уменьшить количество'}><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => updateQuantity(product.id, 1)} aria-label={language === 'ro' ? 'Mărește cantitatea' : 'Увеличить количество'}><Plus size={13} /></button></div></div><button className="remove-cart-item" type="button" onClick={() => removeFromCart(product.id)} aria-label={language === 'ro' ? 'Elimină produsul' : 'Удалить товар'}><Trash2 size={16} /></button></div>)}</div>
+            <div className="cart-items">{cart.map(({ product, quantity }) => <div className="cart-item" key={product.id}><img {...responsiveImageProps(product.image, '76px', [120, 240])} alt="" width="76" height="82" /><div className="cart-item-copy"><strong>{productLabel(product, 'name', language)}</strong><span>{product.sellerName}</span><b>{formatPrice(product.priceMDL)} MDL</b><div className="quantity-control"><button type="button" onClick={() => updateQuantity(product.id, -1)} aria-label={language === 'ro' ? 'Scade cantitatea' : 'Уменьшить количество'}><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => updateQuantity(product.id, 1)} aria-label={language === 'ro' ? 'Mărește cantitatea' : 'Увеличить количество'}><Plus size={13} /></button></div></div><button className="remove-cart-item" type="button" onClick={() => removeFromCart(product.id)} aria-label={language === 'ro' ? 'Elimină produsul' : 'Удалить товар'}><Trash2 size={16} /></button></div>)}</div>
             <div className="cart-summary"><div className="subtotal-row"><span>{t.subtotal}</span><strong>{formatPrice(cartTotal)} MDL</strong></div><p>{t.checkoutNote}</p><button className="button button-dark checkout-button" type="button" onClick={() => { setCheckoutErrors({}); setCheckoutStep('details'); }}>{t.demoCheckout}<ArrowRight size={17} /></button></div>
           </>)}
           {checkoutStep === 'details' && <>
